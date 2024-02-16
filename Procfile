@@ -1,0 +1,1 @@
+web: build/install/Cradle Care/bin/Cradle Care
