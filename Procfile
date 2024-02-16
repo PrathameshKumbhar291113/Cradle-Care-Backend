@@ -1,1 +1,1 @@
-web: build/install/Cradle Care/bin/Cradle Care
+web: build/install/CradleCare/bin/CradleCare
