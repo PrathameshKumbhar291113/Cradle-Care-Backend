@@ -19,6 +19,9 @@ const val USERS = "$API_VERSION/users"
 const val REGISTER_REQUEST = "$USERS/register"
 const val LOGIN_REQUEST = "$USERS/login"
 
+const val POST_IS_USER_LOGGED_IN = "$USERS/postUserLoggedIn"
+const val GET_IS_USER_LOGGED_IN = "$USERS/getUserLoggedIn"
+
 fun Route.userRoutes(
     ccUserRepo: CradleCareUserRepository,
     ccJwtService: CradleCareJwtService,
@@ -57,6 +60,8 @@ fun Route.userRoutes(
                     registerRequest.userLastOtp,
                     registerRequest.userPanNumber,
                     registerRequest.userAadharNumber,
+                    registerRequest.isUserLoggedIn,
+                    registerRequest.isUserOnboarded
                 )
 
                 /*val userResponseWithoutPassword = UserResponseWithoutPassword(userName = user.userName, userId = user.userId , userEmail = user.userEmail)*/

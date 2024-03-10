@@ -17,7 +17,7 @@ class CradleCareJwtService {
 
     fun generateToken(user: CradleCareUser) : String{
         return JWT.create()
-            .withSubject("NoteAppAuth")
+            .withSubject("CradleCareAppAuth")
             .withIssuer(issuer)
             .withClaim("userId", user.userId)
             .sign(algorithm)

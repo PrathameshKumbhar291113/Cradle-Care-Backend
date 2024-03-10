@@ -10,5 +10,7 @@ data class UserRegisterRequest(
     val expectedDeliveryDate : Long?,
     val userIsKycDone : Boolean?,
     val userPanNumber : String?,
-    val userAadharNumber : String?
+    val userAadharNumber : String?,
+    val isUserLoggedIn: Boolean?,
+    val isUserOnboarded: Boolean?
 )

@@ -13,5 +13,7 @@ data class CradleCareUser(
     val userIsKycDone : Boolean?,
     val userLastOtp : Int?,
     val userPanNumber : String?,
-    val userAadharNumber : String?
+    val userAadharNumber : String?,
+    val isUserLoggedIn: Boolean?,
+    val isUserOnboarded: Boolean?
 ): Principal

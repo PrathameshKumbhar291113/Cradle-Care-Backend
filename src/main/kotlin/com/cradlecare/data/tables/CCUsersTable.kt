@@ -15,6 +15,8 @@ object CCUsersTable : Table() {
     val userIsKycDone = bool("userIsKycDone").nullable().default(false)
     val userPanNumber = varchar("userPanNumber", 10).nullable()
     val userAadharNumber = varchar("userAadharNumber", 12).nullable()
+    val isUserLoggedIn = bool("isUserLoggedIn").nullable().default(false)
+    val isUserOnboarded = bool("isUserOnboarded").nullable().default(false)
 
     override val primaryKey: Table.PrimaryKey = PrimaryKey(userId)
 }

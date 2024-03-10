@@ -6,6 +6,7 @@ import com.cradlecare.repository.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.update
 
 class CradleCareUserRepository {
 
@@ -34,6 +35,8 @@ class CradleCareUserRepository {
                 it[CCUsersTable.userIsKycDone] = user.userIsKycDone
                 it[CCUsersTable.userPanNumber] = user.userPanNumber
                 it[CCUsersTable.userAadharNumber] = user.userAadharNumber
+                it[CCUsersTable.isUserLoggedIn] = user.isUserLoggedIn
+                it[CCUsersTable.isUserOnboarded] = user.isUserOnboarded
             }
         }
     }
@@ -59,8 +62,22 @@ class CradleCareUserRepository {
             userExpectedDeliveryDate = row[CCUsersTable.userExpectedDeliveryDate],
             userIsKycDone = row[CCUsersTable.userIsKycDone],
             userPanNumber = row[CCUsersTable.userPanNumber],
-            userAadharNumber = row[CCUsersTable.userAadharNumber]
+            userAadharNumber = row[CCUsersTable.userAadharNumber],
+            isUserLoggedIn = row[CCUsersTable.isUserLoggedIn],
+            isUserOnboarded = row[CCUsersTable.isUserOnboarded]
         )
+    }
+
+    suspend fun addIsLoggedInFlag(userId: String, isUserLoggedIn: Boolean) = dbQuery{
+        CCUsersTable.update({ CCUsersTable.userId eq userId}) {
+            it[CCUsersTable.isUserLoggedIn] = isUserLoggedIn
+        }
+    }
+
+    suspend fun getIsUserLoggedInFlag(userId: String) : Boolean = dbQuery {
+        CCUsersTable.select { CCUsersTable.userId eq userId }
+            .map { it[CCUsersTable.isUserLoggedIn] }
+            .singleOrNull() ?: false
     }
 
 }
