@@ -1,6 +1,7 @@
 package com.cradlecare.repository
 
 import com.cradlecare.data.model.dao.CradleCareUser
+import com.cradlecare.data.model.response.UserIsLoggedInOnboardedFlagResponse
 import com.cradlecare.data.tables.CCUsersTable
 import com.cradlecare.repository.DatabaseFactory.dbQuery
 import org.jetbrains.exposed.sql.ResultRow
@@ -68,16 +69,26 @@ class CradleCareUserRepository {
         )
     }
 
-    suspend fun addIsLoggedInFlag(userId: String, isUserLoggedIn: Boolean) = dbQuery{
-        CCUsersTable.update({ CCUsersTable.userId eq userId}) {
+    suspend fun addIsUserLoggedInFlag(userId: String, isUserLoggedIn: Boolean) = dbQuery {
+        CCUsersTable.update({ CCUsersTable.userId eq userId }) {
             it[CCUsersTable.isUserLoggedIn] = isUserLoggedIn
         }
     }
 
-    suspend fun getIsUserLoggedInFlag(userId: String) : Boolean = dbQuery {
+    suspend fun addIsUserOnboardedFlag(userId: String, isUserOnboarded: Boolean) = dbQuery {
+        CCUsersTable.update({ CCUsersTable.userId eq userId }) {
+            it[CCUsersTable.isUserOnboarded] = isUserOnboarded
+        }
+    }
+
+    suspend fun getIsUserLoggedInFlag(userId: String): UserIsLoggedInOnboardedFlagResponse = dbQuery {
         CCUsersTable.select { CCUsersTable.userId eq userId }
-            .map { it[CCUsersTable.isUserLoggedIn] }
-            .singleOrNull() ?: false
+            .singleOrNull()?.let {
+                UserIsLoggedInOnboardedFlagResponse(
+                    isUserLoggedIn = it[CCUsersTable.isUserLoggedIn] ?: false,
+                    isUserOnBoarded = it[CCUsersTable.isUserOnboarded] ?: false
+                )
+            } ?: throw NoSuchElementException("User not found for userId: $userId")
     }
 
 }
