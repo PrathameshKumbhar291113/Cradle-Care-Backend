@@ -8,6 +8,9 @@ import org.jetbrains.exposed.sql.ResultRow
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.update
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class CradleCareUserRepository {
 
@@ -69,13 +72,13 @@ class CradleCareUserRepository {
         )
     }
 
-    suspend fun addIsUserLoggedInFlag(userId: String, isUserLoggedIn: Boolean) = dbQuery {
+    suspend fun updateIsUserLoggedInFlag(userId: String, isUserLoggedIn: Boolean) = dbQuery {
         CCUsersTable.update({ CCUsersTable.userId eq userId }) {
             it[CCUsersTable.isUserLoggedIn] = isUserLoggedIn
         }
     }
 
-    suspend fun addIsUserOnboardedFlag(userId: String, isUserOnboarded: Boolean) = dbQuery {
+    suspend fun updateIsUserOnboardedFlag(userId: String, isUserOnboarded: Boolean) = dbQuery {
         CCUsersTable.update({ CCUsersTable.userId eq userId }) {
             it[CCUsersTable.isUserOnboarded] = isUserOnboarded
         }
@@ -89,6 +92,31 @@ class CradleCareUserRepository {
                     isUserOnBoarded = it[CCUsersTable.isUserOnboarded] ?: false
                 )
             } ?: throw NoSuchElementException("User not found for userId: $userId")
+    }
+
+    suspend fun getIsKycDoneStatus(userId: String): Boolean = dbQuery{
+        CCUsersTable.select { CCUsersTable.userId eq userId }
+            .map { it[CCUsersTable.userIsKycDone] }
+            .singleOrNull() ?: false
+    }
+
+    suspend fun updateIsKycDoneFlag(userId: String, isKycDone: Boolean) = dbQuery {
+        CCUsersTable.update({ CCUsersTable.userId eq userId }) {
+            it[CCUsersTable.userIsKycDone] = isKycDone
+        }
+    }
+
+    suspend fun getDaysLeftForDelivery(userId: String): Long? = dbQuery {
+        val resultRow = CCUsersTable.select { CCUsersTable.userId eq userId }
+            .singleOrNull()
+
+        val expectedDeliveryDateString = resultRow?.getOrNull(CCUsersTable.userExpectedDeliveryDate) ?: return@dbQuery null
+
+        val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy")
+        val expectedDeliveryDate = LocalDate.parse(expectedDeliveryDateString, formatter)
+        val currentDate = LocalDate.now()
+
+        return@dbQuery ChronoUnit.DAYS.between(currentDate, expectedDeliveryDate)
     }
 
 }

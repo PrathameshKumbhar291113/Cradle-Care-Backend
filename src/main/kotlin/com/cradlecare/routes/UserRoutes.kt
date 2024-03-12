@@ -24,6 +24,9 @@ const val LOGIN_REQUEST = "$USERS/login"
 const val POST_IS_USER_LOGGED_IN = "$USERS/postUserLoggedIn"
 const val POST_IS_USER_ONBOARDED = "$USERS/postUserOnboarded"
 const val GET_IS_USER_LOGGED_IN_AND_ONBOARDED = "$USERS/getUserLoggedInAndOnboarded"
+const val GET_IS_KYC_DONE = "$USERS/getIsKycDone"
+const val POST_IS_KYC_DONE = "$USERS/postIsKycDone"
+const val GET_DAYS_LEFT_FOR_PREGNANCY = "$USERS/getDaysLeftForPregnancy"
 
 fun Route.userRoutes(
     ccUserRepo: CradleCareUserRepository,
@@ -129,7 +132,7 @@ fun Route.userRoutes(
         }
 
         try {
-            ccUserRepo.addIsUserLoggedInFlag(isUserLoggedIn.userId , isUserLoggedIn.userLoggedIn)
+            ccUserRepo.updateIsUserLoggedInFlag(isUserLoggedIn.userId , isUserLoggedIn.userLoggedIn)
             call.respond(
                 HttpStatusCode.OK,
                 SimpleResponse(true, "Is User Logged In Flag Updated Successfully.", response = null)
@@ -151,7 +154,7 @@ fun Route.userRoutes(
         }
 
         try {
-            ccUserRepo.addIsUserOnboardedFlag(isUserOnboarded.userId , isUserOnboarded.userOnBoarded)
+            ccUserRepo.updateIsUserOnboardedFlag(isUserOnboarded.userId , isUserOnboarded.userOnBoarded)
             call.respond(
                 HttpStatusCode.OK,
                 SimpleResponse(true, "Is User Onboarded Flag Updated Successfully.", response = null)
@@ -175,12 +178,60 @@ fun Route.userRoutes(
         try {
             userId?.let {
                 val isUserLoggedInAndOnboardedFlag = ccUserRepo.getIsUserLoggedInFlag(it)
-                call.respond(HttpStatusCode.OK, SimpleResponse(true, "Note Deleted Successfully!", response = isUserLoggedInAndOnboardedFlag))
+                call.respond(HttpStatusCode.OK, SimpleResponse(true, "User Is LoggedIn And Onboarded Flags Sent Successfully!", response = isUserLoggedInAndOnboardedFlag))
             }
 
         }catch (e: Exception){
             call.respond(HttpStatusCode.Conflict,SimpleResponse(false, e.message ?: "Some problem Occurred!", response = null))
         }
+    }
+
+    get (GET_IS_KYC_DONE){
+        val userId = try {
+            call.request.queryParameters["userId"]
+        }catch (e: Exception){
+            call.respond(HttpStatusCode.BadRequest,SimpleResponse(false,"QueryParameter : userId is not present", response = null))
+            return@get
+        }
+
+        try {
+            userId?.let {
+                val isKycDone = ccUserRepo.getIsKycDoneStatus(it)
+                call.respond(HttpStatusCode.OK, SimpleResponse(true, "Is Kyc Done Flag Sent Successfully!", response = isKycDone))
+            }
+
+        }catch (e: Exception){
+            call.respond(HttpStatusCode.Conflict,SimpleResponse(false, e.message ?: "Some problem Occurred!", response = null))
+        }
+    }
+
+    post(POST_IS_KYC_DONE){
+
+        val isKycDone = try{
+            call.receive<UserFlagsForOnboarded>()
+        }catch (e: Exception){
+            call.respond(HttpStatusCode.BadRequest, SimpleResponse(false, "Missing Some Fields", response = null))
+            return@post
+        }
+
+        try {
+            ccUserRepo.updateIsKycDoneFlag(isKycDone.userId , isKycDone.userOnBoarded)
+            call.respond(
+                HttpStatusCode.OK,
+                SimpleResponse(true, "Is User Kyc Done Flag Updated Successfully.", response = null)
+            )
+        }catch (e: Exception){
+            call.respond(
+                HttpStatusCode.Conflict,
+                SimpleResponse(false, e.message ?: "Some error occurred.", response = null)
+            )
+        }
+
+    }
+
+
+    get(GET_DAYS_LEFT_FOR_PREGNANCY) {
+        
     }
 
 }
