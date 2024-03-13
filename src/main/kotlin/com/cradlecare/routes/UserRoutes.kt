@@ -20,7 +20,7 @@ const val API_VERSION = "/v1"
 const val USERS = "$API_VERSION/users"
 const val REGISTER_REQUEST = "$USERS/register"
 const val LOGIN_REQUEST = "$USERS/login"
-
+const val CHECK_SERVER_RUNNING ="$USERS/checkHello"
 const val POST_IS_USER_LOGGED_IN = "$USERS/postUserLoggedIn"
 const val POST_IS_USER_ONBOARDED = "$USERS/postUserOnboarded"
 const val GET_IS_USER_LOGGED_IN_AND_ONBOARDED = "$USERS/getUserLoggedInAndOnboarded"
@@ -232,6 +232,10 @@ fun Route.userRoutes(
 
     get(GET_DAYS_LEFT_FOR_PREGNANCY) {
         
+    }
+
+    get(CHECK_SERVER_RUNNING){
+        call.respondText { "SERVER WORKING" }
     }
 
 }

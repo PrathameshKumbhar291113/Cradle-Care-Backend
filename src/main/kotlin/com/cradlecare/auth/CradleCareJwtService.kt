@@ -7,7 +7,7 @@ import com.cradlecare.data.model.dao.CradleCareUser
 
 class CradleCareJwtService {
     private val issuer = "cradle_care_server"
-    private val jwtSecret = System.getenv("CRADLE_CARE_JWT_SECRET")
+    private val jwtSecret = "cradle_care_jwt_secret"
     private val algorithm = Algorithm.HMAC512(jwtSecret)
 
     val verifier : JWTVerifier = JWT

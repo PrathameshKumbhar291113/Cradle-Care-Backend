@@ -4,7 +4,8 @@ import io.ktor.util.*
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
-private val hashKey = System.getenv("CRADLE_CARE_HASH_SECRET_KEY").toByteArray()
+//private val hashKey = System.getenv("CRADLE_CARE_HASH_SECRET_KEY").toByteArray()
+private val hashKey = "cradle_care_hash_secret_key".toByteArray()
 private val hmacKey = SecretKeySpec(hashKey ,"HmacSHA1")
 
 fun hash(password: String): String{
