@@ -26,13 +26,6 @@ object DatabaseFactory {
         config.maximumPoolSize = 3
         config.isAutoCommit = true
         config.transactionIsolation = "TRANSACTION_REPEATABLE_READ"
-
-//        val uri = URI(System.getenv("DATABASE_URL"))
-//        val userName = uri.userInfo.split(":").toTypedArray()[0]
-//        val password = uri.userInfo.split(":").toTypedArray()[1]
-//
-//        config.jdbcUrl = "jdbc:postgresql://"+uri.host + ":" + uri.port + uri.path + "?sslmode=require" + "&user=$userName&password=$password"
-
         config.validate()
         return HikariDataSource(config)
     }
